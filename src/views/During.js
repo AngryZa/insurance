@@ -28,9 +28,10 @@ class During extends React.Component {
                 date: "***",
                 money: "***"
             },
-            informations: [],
-            total: 0,
-            computedArr: [
+
+            informationsAE: [],
+            totalAE: 0,
+            computedArrAE: [
                 computedItem,
             ]
         }
@@ -54,16 +55,14 @@ class During extends React.Component {
 
         
         if(data.sex!=null && data.age!=null && data.date!=null && data.money!=null) {
-            var informations = Computed(data);
-            // console.log(data,informations,'初始化')
-
-            
+            var informationsAE = Computed(data);
+            // console.log(data,informationsAE,'初始化')
             this.setState({
                 data,
-                informations,
-                total: Number(data.money),
-                // total: Number(data.money)-5000,
-                computedArr: store.getState().during.computedArr
+                informationsAE,
+                totalAE: Number(data.money),
+                // totalAE: Number(data.money)-5000,
+                computedArrAE: store.getState().during.computedArr
             })
         } else {
             this.props.history.replace("/");
@@ -71,14 +70,14 @@ class During extends React.Component {
     }
 
     componentWillUnmount() {
-        var arr = this.state.computedArr;
+        var arr = this.state.computedArrAE;
         store.dispatch({type: "CHANGEDURING",value: arr});
     }
 
     //点击下一步执行的函数
     submitFunc() {
         var data = this.state.data;
-        var arr = this.state.computedArr;
+        var arr = this.state.computedArrAE;
         var minus = [];
         for(let index=0;index<arr.length;index++) {
             // 多余的代码，arr[index].year不存在
@@ -95,7 +94,7 @@ class During extends React.Component {
             const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
             for(let i=0;i<haveAge;i++) {
                 var number = Number(arr[index].age_start) - Number(data.age) - 1 + i;
-                var infos = this.state.informations[number];
+                var infos = this.state.informationsAE[number];
                 let year = Number(arr[index].age_start) + i;
                 var isminus = minus.find((item)=>{
                     return Number(item.year) === year;
@@ -133,9 +132,9 @@ class During extends React.Component {
         
 
         var value = e.target.value.replace(/\D/g,'');
-        var arr = this.state.computedArr;
-        var diminish_total = Number(this.state.total);
-        // console.log(value,arr,diminish_total,this.state.total)
+        var arr = this.state.computedArrAE;
+        var diminish_totalAE = Number(this.state.totalAE);
+        // console.log(value,arr,diminish_totalAE,this.state.totalAE)
 
         if(type === 1) {
             if(Number(value) > 105) {
@@ -156,16 +155,16 @@ class During extends React.Component {
                 for(let i=0;i<arr.length;i++) {
                     const haveAge = Number(arr[i].age_end) - Number(arr[i].age_start) + 1;
                     if(i !== index) {
-                        diminish_total = diminish_total - Number(arr[i].diminish) * haveAge;
+                        diminish_totalAE = diminish_totalAE - Number(arr[i].diminish) * haveAge;
                     }
                 }
                 const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
-                console.log(haveAge,'haveAge',diminish_total)
-                if ((diminish_total -5000 )/ haveAge <= Number(value)) {
-                    value = Number(diminish_total / haveAge).toFixed(0);
+                console.log(haveAge,'haveAge',diminish_totalAE)
+                if ((diminish_totalAE -5000 )/ haveAge <= Number(value)) {
+                    value = Number(diminish_totalAE / haveAge).toFixed(0);
                     Toast.info("减保后的基本保险金额不可低于5000");
                 }
-                if(diminish_total === 0) {
+                if(diminish_totalAE === 0) {
                     value = "";
                 }
                 arr[index].diminish = value;
@@ -178,9 +177,9 @@ class During extends React.Component {
         arr = this.reLoadFunc(arr);
 
         this.setState({
-            computedArr: arr
+            computedArrAE: arr
         })
-        console.log(this.state.data,'前面的是data,后面那个是COMPTERARR',this.state.computedArr)
+        console.log(this.state.data,'前面的是data,后面那个是COMPTERARR',this.state.computedArrAE)
     }
 
     //重新渲染所有数组
@@ -188,12 +187,12 @@ class During extends React.Component {
         // console.log(arr,'渲染ARR')
         for(let per=0;per<arr.length;per++) {
             if(arr[per].age_start !== "" && arr[per].age_end !== "" && arr[per].diminish !== "" && Number(arr[per].age_start) <= Number(arr[per].age_end) && Number(arr[per].age_start) > Number(this.state.data.age) && Number(arr[per].age_end) > Number(this.state.data.age)) {
-                var total = Number(arr[per].age_end) - Number(arr[per].age_start) + 1;
+                var totalAE = Number(arr[per].age_end) - Number(arr[per].age_start) + 1;
                 var cash_all = 0;
                 var finish_all = 0;
-                for(let i=0;i<total;i++) {
+                for(let i=0;i<totalAE;i++) {
                     var number = Number(arr[per].age_start) - Number(this.state.data.age) - 1 + i;
-                    var infos = this.state.informations[number];
+                    var infos = this.state.informationsAE[number];
 
                     var result = this.getAllReduceFunc(Number(arr[per].age_start)+i,arr,infos);
                     cash_all = cash_all + result;
@@ -214,40 +213,40 @@ class During extends React.Component {
     getAllLastFunc(year,arr,infos) {
         // console.log(year,arr,arr.length,infos,'获取减保后基本保险金额')
         
-        let total = Number(this.state.data.money);  //总金额
+        let totalAE = Number(this.state.data.money);  //总金额
         
         for(let index=0;index<arr.length;index++) {
             const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
             for(let i=0;i<haveAge;i++) {
                 if(year >= Number(arr[index].age_start) + i) {
                     if(arr[index].age_start !== "" && arr[index].age_end !== "" && arr[index].diminish !== "" && Number(arr[index].age_start) <= Number(arr[index].age_end) && Number(arr[index].age_start) > Number(this.state.data.age) && Number(arr[index].age_end) > Number(this.state.data.age)) {
-                        total = total - Number(arr[index].diminish);
+                        totalAE = totalAE - Number(arr[index].diminish);
                     }
                 }
             }
         }
         
-        // return total/1000*Number(infos.cash).toFixed(2);
-        return (total/infos.radio)*Number(infos.cash).toFixed(2);
+        // return totalAE/1000*Number(infos.cash).toFixed(2);
+        return (totalAE/infos.radio)*Number(infos.cash).toFixed(2);
         // return Number(100);
 
     }
 
     //获取当年所有减保
     getAllReduceFunc(now,arr,infos) {
-        let total = 0;
+        let totalAE = 0;
         for(let index=0;index<arr.length;index++) {
             const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
             for(let i=0;i<haveAge;i++) {
                 let year = Number(arr[index].age_start) + i;
                 if(year === now) {
-                    total = total + Number(arr[index].diminish);
+                    totalAE = totalAE + Number(arr[index].diminish);
                 }
             }
         }
         
-        // return total/1000*Number(infos.cash).toFixed(2);
-        return (total/infos.radio)*Number(infos.cash).toFixed(2);
+        // return totalAE/1000*Number(infos.cash).toFixed(2);
+        return (totalAE/infos.radio)*Number(infos.cash).toFixed(2);
     }
 
     render() {
@@ -258,6 +257,7 @@ class During extends React.Component {
                         this.props.history.replace("/")
                     }
                 }></Header>
+                
                 <div className="during_content_frame">
                     {/* 数据测算标题栏目 */}
                     <div className="result_item during_items_frame">
@@ -271,19 +271,8 @@ class During extends React.Component {
                     </div>
 
                     {/* 展示渲染栏目 */}
-                    {this.state.computedArr.map((item,index)=>(
+                    {this.state.computedArrAE.map((item,index)=>(
                         <div className="during_lists_frame" key={index}>
-                            
-                            
-                            {/* 关闭按钮 */}
-                            {/* {index !== 0?<div className="result_close_frame" onClick={(e)=>{
-                                var arr = this.state.computedArr;
-                                arr.splice(index,1);
-                                arr = this.reLoadFunc(arr);
-                                this.setState({
-                                    computedArr: arr
-                                })
-                            }}>×</div>:<div></div>} */}
                             
                             
 
@@ -315,11 +304,11 @@ class During extends React.Component {
                            
                             {/* 关闭按钮 */}
                             {index !== 0?<div className="result_close_frame2" onClick={(e)=>{
-                                var arr = this.state.computedArr;
+                                var arr = this.state.computedArrAE;
                                 arr.splice(index,1);
                                 arr = this.reLoadFunc(arr);
                                 this.setState({
-                                    computedArr: arr
+                                    computedArrAE: arr
                                 })
                             }}>关闭此减保</div>:<div></div>}    
                             
@@ -327,10 +316,10 @@ class During extends React.Component {
                             {Number(item.diminish%1000)!==0?<div className="result_bottom_notice"><span className="span">*</span>减保基本保险金额必须是1000的整数倍</div>:<div></div>} */}
                             
                             
-                            {index === (this.state.computedArr.length - 1)?(
+                            {index === (this.state.computedArrAE.length - 1)?(
                                 <div className="during_add_frame">
                                     <input className="result_common_button" type="button" value="增加减保年龄段" onClick={(e)=>{
-                                        var arr = this.state.computedArr;
+                                        var arr = this.state.computedArrAE;
                                        
                                         //保证只能显示一个输入框
                                         var r=arr.filter((currentValue,index)=>{
@@ -351,7 +340,7 @@ class During extends React.Component {
                                             }
                                         )
                                         this.setState({
-                                            computedArr: arr
+                                            computedArrAE: arr
                                         })
                                     }}/>
                                 </div>

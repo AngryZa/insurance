@@ -28,6 +28,12 @@ export default (state,action) => {
         case "CHANGEBENEFIT":
             newState.benefit.isAllPay = action.value;
             return newState;
+        case "RESETRESULT":
+            newState.result = action.value;
+            return newState;
+        case "RESETDURING":
+            newState.during = action.value;
+            return newState;
         default:
             return state;
     }

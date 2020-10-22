@@ -2,12 +2,22 @@ import React from 'react';
 import Computed from '../asset/js/computed';
 import {getlast as Getlast,reload as Reload} from '../asset/js/getlast';
 import store from '../store/createStore';
+import { Tabs, WhiteSpace, Badge } from 'antd-mobile';
 
 import Header from '../components/Header';
 import Button from '../components/Button';
 import Notice from '../components/Notice';
 
 import {Toast} from 'antd-mobile';
+
+//计算标准模板
+const computedItem = {
+    age_start: "",
+    age_end: "",
+    diminish: "",
+    cash: "",
+    finish: ""
+}
 
 class Result extends React.Component {
     constructor(props) {
@@ -44,8 +54,26 @@ class Result extends React.Component {
                 }
             ],
             total: 0,
-            radio:''
+            radio:'',
+            tabs : [
+                { title: '固定年龄段减保'},
+                { title: '非固定年龄段减保' },
+            ],
+            informationsAE: [],
+            totalAE: 0,
+            computedArrAE: [
+                computedItem,
+            ],
+            jumpIndex:0
         }
+        this.submitFunc1 = this.submitFunc1.bind(this);
+        this.submitFunc2 = this.submitFunc2.bind(this);
+        this.changeFunc = this.changeFunc.bind(this);
+        this.getAllLastFunc = this.getAllLastFunc.bind(this);
+        this.getAllReduceFunc = this.getAllReduceFunc.bind(this);
+        this.reLoadFunc = this.reLoadFunc.bind(this);
+        this.clearStoreFunc=this.clearStoreFunc.bind(this);
+        this.choiceJumoFunc=this.choiceJumoFunc.bind(this);
     }
 
     componentDidMount() {
@@ -58,16 +86,15 @@ class Result extends React.Component {
             date: params.get("date"),
             money: params.get("money")
         }
-        // console.log(this.props.location.search,666,data)
         if(data.sex!=null && data.age!=null && data.date!=null && data.money!=null) {
             var informations = Computed(data);
-            
+            var informationsAE = Computed(data);
+
             this.setState({
                 data,
                 age: Number(data.age)+1,
                 informations,
                 infos: informations[0],
-            
                 computedArr: [
                     {
                         year: Number(data.age)+1,
@@ -76,21 +103,36 @@ class Result extends React.Component {
                     }
                 ],
                 total: Number(data.money)-5000,
-                radio:informations[0].radio
+                radio:informations[0].radio,
+
+                informationsAE,
+                totalAE: Number(data.money),
+                computedArrAE: store.getState().during.computedArr
             },()=>{
                 // console.log(this.state.infos,'callback')
             })
-            
         } else {
             this.props.history.replace("/");
         }
-        
-        // console.log(store.getState().result.computedArr,'yian')
+        console.log(this.state.computedArrAE,'mapmap')
     }
 
-    //跳转页面
-    submitFunc() {
+    choiceJumoFunc(){
+        console.log(666)
+        var index= this.state.jumpIndex
+        console.log(index)
+        if(index===0){
+            this.submitFunc2()
+        }else{
+            this.submitFunc1()
+        }
+    }
+
+
+    //非固定年龄段跳转页面
+    submitFunc1() {
         var data = this.state.data;
+        // 非固定年龄减保发送
         var arr = [];
         var miunsArr = store.getState().result.computedArr;
         for(let i=0;i<miunsArr.length;i++) {
@@ -119,8 +161,217 @@ class Result extends React.Component {
             }
         }
         var str = JSON.stringify(arr);
+        console.log(str,'str')
         this.props.history.push({pathname: "/plan",search: `?name=${data.name}&sex=${data.sex}&age=${data.age}&date=${data.date}&money=${data.money}&minus=${str}`});
     }
+
+    //固定年龄段跳转页面
+    submitFunc2() {
+        var data = this.state.data;
+        var arr = this.state.computedArrAE;
+        var minus = [];
+        for(let index=0;index<arr.length;index++) {
+            // 多余的代码，arr[index].year不存在
+            if(Number(arr[index].year) - Number(this.state.data.age) <= 0 && arr[index].year !== "") {
+                Toast.info("减保年龄有误");
+                return;
+            }
+            if(Number(arr[index].diminish)%1000!==0) {
+                Toast.info("减保基本保险金额必须是1000的整数倍");
+                return;
+            }
+            const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
+            for(let i=0;i<haveAge;i++) {
+                var number = Number(arr[index].age_start) - Number(data.age) - 1 + i;
+                var infos = this.state.informationsAE[number];
+                let year = Number(arr[index].age_start) + i;
+                var isminus = minus.find((item)=>{
+                    return Number(item.year) === year;
+                })
+                if(arr[index].age_start !== "" && arr[index].age_end !== "" && arr[index].diminish !== "" && Number(arr[index].age_start) <= Number(arr[index].age_end) && Number(arr[index].age_start) > Number(this.state.data.age) && Number(arr[index].age_end) > Number(this.state.data.age)) {
+                    if(!isminus) {
+                        minus.push({
+                            year: year,
+                            result: this.getAllReduceFunc(Number(arr[index].age_start)+i,arr,infos).toFixed(2),
+                            value: Number(arr[index].diminish),
+                            finish: this.getAllLastFunc(Number(arr[index].age_start)+i,arr,infos).toFixed(2)
+                        })
+                    } else {
+                        for(let j=0;j<minus.length;j++) {
+                            if(year === minus[j].year) {
+                                minus[j].value = Number(minus[j].value) + Number(arr[index].diminish);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        minus.sort((a,b)=>{
+            return a.year - b.year;
+        });
+        var str = JSON.stringify(minus);
+        console.log(str,'str')
+
+        this.props.history.push({pathname: "/plan",search: `?name=${data.name}&sex=${data.sex}&age=${data.age}&date=${data.date}&money=${data.money}&minus=${str}`});
+    }
+
+    //改变输入框
+    changeFunc(e) {
+        
+        const type = Number(e.target.dataset.type);
+        const index = Number(e.target.dataset.index);
+        
+
+        var value = e.target.value.replace(/\D/g,'');
+        var arr = this.state.computedArrAE;
+        var diminish_totalAE = Number(this.state.totalAE);
+        // console.log(value,arr,diminish_totalAE,this.state.totalAE)
+
+        if(type === 1) {
+            if(Number(value) > 105) {
+                value = "105";
+            }
+            if(arr[index].age_end !== "" && Number(value) > Number(arr[index].age_end)) {
+                value = arr[index].age_end;
+            }
+            // console.log(value,'初始值')
+            arr[index].age_start = value;
+        } else if(type === 2) {
+            if(Number(value) > 105) {
+                value = "105";
+            }
+            arr[index].age_end = value;
+        } else if(type === 3) {
+            if(arr[index].age_start !== "" && arr[index].age_end !== "" && Number(arr[index].age_start) <= Number(arr[index].age_end) && Number(arr[index].age_start) > Number(this.state.data.age) && Number(arr[index].age_end) > Number(this.state.data.age)) {
+                for(let i=0;i<arr.length;i++) {
+                    const haveAge = Number(arr[i].age_end) - Number(arr[i].age_start) + 1;
+                    if(i !== index) {
+                        diminish_totalAE = diminish_totalAE - Number(arr[i].diminish) * haveAge;
+                    }
+                }
+                const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
+                console.log(haveAge,'haveAge',diminish_totalAE)
+                if ((diminish_totalAE -5000 )/ haveAge <= Number(value)) {
+                    value = Number(diminish_totalAE / haveAge).toFixed(0);
+                    Toast.info("减保后的基本保险金额不可低于5000");
+                }
+                if(diminish_totalAE === 0) {
+                    value = "";
+                }
+                arr[index].diminish = value;
+                console.log(value,9990909)
+            } else {
+                Toast.info("请先输入正确的年龄段");
+            }
+        }
+        // console.log(arr,"计算前的ARR")
+        arr = this.reLoadFunc(arr);
+
+        this.setState({
+            computedArrAE: arr
+        })
+        console.log(this.state.data,'前面的是data,后面那个是COMPTERARR',this.state.computedArrAE)
+    }
+
+    //重新渲染所有数组
+    reLoadFunc(arr) {
+        // console.log(arr,'渲染ARR')
+        for(let per=0;per<arr.length;per++) {
+            if(arr[per].age_start !== "" && arr[per].age_end !== "" && arr[per].diminish !== "" && Number(arr[per].age_start) <= Number(arr[per].age_end) && Number(arr[per].age_start) > Number(this.state.data.age) && Number(arr[per].age_end) > Number(this.state.data.age)) {
+                var totalAE = Number(arr[per].age_end) - Number(arr[per].age_start) + 1;
+                var cash_all = 0;
+                var finish_all = 0;
+                for(let i=0;i<totalAE;i++) {
+                    var number = Number(arr[per].age_start) - Number(this.state.data.age) - 1 + i;
+                    var infos = this.state.informationsAE[number];
+
+                    var result = this.getAllReduceFunc(Number(arr[per].age_start)+i,arr,infos);
+                    cash_all = cash_all + result;
+
+                    finish_all = this.getAllLastFunc(Number(arr[per].age_start)+i,arr,infos);
+                }
+                arr[per].cash = cash_all.toFixed(2);
+                arr[per].finish = finish_all.toFixed(2);
+            } else {
+                arr[per].cash = "";
+                arr[per].finish = "";
+            }
+        }
+        return arr;
+    }
+
+    //获取减保后基本保险金额
+    getAllLastFunc(year,arr,infos) {
+        // console.log(year,arr,arr.length,infos,'获取减保后基本保险金额')
+        
+        let totalAE = Number(this.state.data.money);  //总金额
+        
+        for(let index=0;index<arr.length;index++) {
+            const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
+            for(let i=0;i<haveAge;i++) {
+                if(year >= Number(arr[index].age_start) + i) {
+                    if(arr[index].age_start !== "" && arr[index].age_end !== "" && arr[index].diminish !== "" && Number(arr[index].age_start) <= Number(arr[index].age_end) && Number(arr[index].age_start) > Number(this.state.data.age) && Number(arr[index].age_end) > Number(this.state.data.age)) {
+                        totalAE = totalAE - Number(arr[index].diminish);
+                    }
+                }
+            }
+        }
+        
+        // return totalAE/1000*Number(infos.cash).toFixed(2);
+        return (totalAE/infos.radio)*Number(infos.cash).toFixed(2);
+        // return Number(100);
+
+    }
+
+    //获取当年所有减保
+    getAllReduceFunc(now,arr,infos) {
+        let totalAE = 0;
+        for(let index=0;index<arr.length;index++) {
+            const haveAge = Number(arr[index].age_end) - Number(arr[index].age_start) + 1;
+            for(let i=0;i<haveAge;i++) {
+                let year = Number(arr[index].age_start) + i;
+                if(year === now) {
+                    totalAE = totalAE + Number(arr[index].diminish);
+                }
+            }
+        }
+        
+        // return totalAE/1000*Number(infos.cash).toFixed(2);
+        return (totalAE/infos.radio)*Number(infos.cash).toFixed(2);
+    }
+
+    //清除STORE里面的所有改变
+    clearStoreFunc(){
+       
+        //store中result的值
+       var a={
+            year: 0,
+            computedArr: [
+                {
+                    year: "",
+                    result: "",
+                    value: "",
+                    finish: ""
+                }
+            ]
+        }
+        //store中during的值
+        var b={
+            computedArr: [
+                {
+                    age_start: "",
+                    age_end: "",
+                    diminish: "",
+                    cash: "",
+                    finish: ""
+                }
+            ]
+        }
+        store.dispatch({type: "RESETRESULT", value: a});
+        store.dispatch({type: "RESETDURING", value: b});
+        console.log("重置store")
+    }
+
 
     render() {
         return (
@@ -133,13 +384,13 @@ class Result extends React.Component {
                 }></Header>
                 <div className="result_header">
                     <div className="result_header_title">《幸福传世金生终身寿险详情》</div>
-                    <div className="result_header_cont">欢迎您{this.state.data.name},您 {this.state.data.age} 周岁,{Number(this.state.data.sex)===0?"男士":"女士"}，<br/>投保“幸福传世金生终身寿险”, 基本保险金额<span className="span">{this.state.data.money}</span>元,{this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>}交费,年交保费<span className="span">{this.state.infos.yearMoney}</span>元。</div>
+                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福传世金生终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div>
                 </div>
                 <div style={{backgroundColor: "#fff",marginBottom: "1rem"}}>
                     <div className="result_middle_first">
                         <span>被保险人在第</span>
                         <div className="result_middle_frame">
-                            <input style={{marginLeft: "2rem"}} className="result_middle_button" type="button" value="-" onClick={
+                            <input style={{marginLeft: "0.5rem"}} className="result_middle_button" type="button" value="-" onClick={
                                 (e)=>{
                                     var self = this;
                                     var now = Number(self.state.age);
@@ -188,7 +439,7 @@ class Result extends React.Component {
                                     }
                                 }
                             }></input>
-                            <input style={{marginRight: "2rem"}} className="result_middle_button" type="button" value="+" onClick={
+                            <input style={{marginRight: "0.5rem"}} className="result_middle_button" type="button" value="+" onClick={
                                 (e)=>{
                                     var self = this;
                                     var age = Number(self.state.age);
@@ -232,40 +483,141 @@ class Result extends React.Component {
                     <div className="result_notice"><span className="span">*</span>以上为未发生减保的数值</div>
                 </div>
 
-
-
-
-
-
                 {/* 2019/5/15   新增需求    start */}
                 <div className="result_diminish_frame">
                     <div className="result_diminish_box">减保试算</div>
-                </div>
-                <div className="result_items_frame">
-                    <div className="result_item_title_special">
-                        <li>固定年龄段减保</li>
-                    </div>
+                </div>  
+                
+
+
+
+                <div>
+                <WhiteSpace />
+                <Tabs 
+                    // onChange={(tab, index) => { console.log('onChange', index, tab); }}
+                    onTabClick={(tab, index) => { 
+                        this.clearStoreFunc() ;
+                        console.log('onTabClick', index, tab);
+                        if(index===0){
+                            this.setState({jumpIndex:0},()=>{
+                                console.log(this.state.jumpIndex,'junpindex');
+                            })
+                        }else{
+                            this.setState({jumpIndex:1},()=>{
+                                console.log(this.state.jumpIndex,'junpindex');
+                            })
+                        }
+                    }}
+                    tabs={this.state.tabs}  animated={false} useOnPan={false}>  
+                {/* 固定年龄段减保 */}
+                <div  style={{ backgroundColor: '#fff' }}>
+                <div className="during_content_frame">
+                    {/* 数据测算标题栏目 */}
                     <div className="result_item_money_special">
-                        <input className="result_common_button" type="button" value="固定年龄段减保" onClick={(e)=>{
-                            var data = this.state.data;
-                            this.props.history.push({pathname: "/during",search: `?name=${data.name}&sex=${data.sex}&age=${data.age}&date=${data.date}&money=${data.money}`}); 
-                        }}/>
+                        <div className="result_item_title"></div>
+                        <div className="result_item_money">
+                            <input className="result_common_button" type="button" value="数据测算" onClick={(e)=>{
+                                var data = this.state.data;
+                                this.props.history.push({pathname: "/data",search: `?name=${data.name}&sex=${data.sex}&age=${data.age}&date=${data.date}&money=${data.money}`}); 
+                            }}/>
+                        </div>
                     </div>
+
+                    {/* 展示渲染栏目 */}
+                    {this.state.computedArrAE.map((item,index)=>(
+                        <div className="during_lists_frame" key={index}>
+                            <div className="during_lists_box">
+                                <span>在</span>
+                                <input className="during_input" data-type="1" data-index={index} onChange={(e)=>{this.changeFunc(e)}} value={item.age_start}></input>
+                                周岁（第{item.age_start && Number(item.age_start) > Number(this.state.data.age)?Number(item.age_start)-Number(this.state.data.age):"*"}个保单年度末）到
+                                <input className="during_input" data-type="2" data-index={index} onChange={(e)=>this.changeFunc(e)} value={item.age_end} onBlur={()=>{
+                                    if(Number(item.age_start)>Number(item.age_end)) {
+                                        Toast.info("第一个年龄必须小于等于第二个年龄");
+                                    }
+                                }}></input>
+                                周岁（第{item.age_end && Number(item.age_end) > Number(this.state.data.age)?Number(item.age_end)-Number(this.state.data.age):"*"}个保单年度末），每年减保
+                                <input className="during_input" data-type="3" data-index={index} onChange={(e)=>this.changeFunc(e)} value={item.diminish} onBlur={()=>{
+                                    if(Number(item.diminish)%1000!==0) {
+                                        Toast.info("输入的内容不是1000的整数倍");
+                                    }
+                                }}></input>
+
+                                
+                                元，累计领取现金价值
+                                {/* <input className="during_input" disabled value={item.cash}></input> */}
+                                <span className="span during_result_input">{item.cash}</span>
+                                元。第{item.age_end && Number(item.age_end) > Number(this.state.data.age)?Number(item.age_end)-Number(this.state.data.age):"*"}个保单年度末现金价值
+                                {/* <input className="during_input" disabled value={item.finish}></input> */}
+                                <span className="span during_result_input">{item.finish}</span>
+                                元（减保后）。
+                            </div>
+                           
+                            {/* 关闭按钮 */}
+                            {index !== 0?<div className="result_close_frame2" onClick={(e)=>{
+                                var arr = this.state.computedArrAE;
+                                arr.splice(index,1);
+                                arr = this.reLoadFunc(arr);
+                                this.setState({
+                                    computedArrAE: arr
+                                })
+                            }}>关闭此减保</div>:<div></div>}    
+                            
+                           {/*  <div className="result_bottom_notice span"><span className="span">*</span>如需增加单年度减保，则仍在本界面点击“增加减保年龄段”，起止年龄为同一数值。</div>
+                            {Number(item.diminish%1000)!==0?<div className="result_bottom_notice"><span className="span">*</span>减保基本保险金额必须是1000的整数倍</div>:<div></div>} */}
+                            
+                            
+                            {index === (this.state.computedArrAE.length - 1)?(
+                                <div className="during_add_frame">
+                                    <input className="result_common_button" type="button" value="增加减保年龄段" onClick={(e)=>{
+                                        var arr = this.state.computedArrAE;
+                                       
+                                        //保证只能显示一个输入框
+                                        var r=arr.filter((currentValue,index)=>{
+                                            return currentValue.age_end===''
+                                        })
+                                        if(r.length>0){
+                                            return false
+                                        }
+
+
+                                        arr.push(
+                                            {
+                                                age_start: "",
+                                                age_end: "",
+                                                diminish: "",
+                                                cash: "",
+                                                finish: ""
+                                            }
+                                        )
+                                        this.setState({
+                                            computedArrAE: arr
+                                        })
+                                    }}/>
+                                </div>
+                            ):<div></div>}
+                        </div>
+                    ))}
                 </div>
+                
+                </div>
+                                
 
 
 
 
 
-                {/* 2019/5/15   新增需求    end */}
+
+                {/* 非固定年龄段减保 */}
+                <div style={{   backgroundColor: '#fff' }}>   
+                        {/* 2019/5/15   新增需求    end */}
                 {store.getState().result.computedArr.map((item,allIndex)=>(
                     
                     <div key={allIndex} style={{backgroundColor: " rgb(255, 255, 255)"}}>
                         {allIndex === 0?
                             <div>
-                                <div className="result_item_title_special">
+                                {/* <div className="result_item_title_special">
                                     <li>非固定年龄段减保</li>
-                                </div>
+                                </div> */}
                                 <div className="result_item_money_special">
                                     <input className="result_common_button" type="button" value="数据测算" onClick={(e)=>{
                                         var data = this.state.data;
@@ -282,14 +634,7 @@ class Result extends React.Component {
 
 
                             
-                            {/* {allIndex !== 0?<div className="result_close_frame" onClick={()=>{
-                                var arr = store.getState().result.computedArr;
-                                arr.splice(allIndex,1);
-                                this.setState({
-                                    computedArr: arr
-                                })
-                                store.dispatch({type: "CHANGEARR",value: arr});
-                            }}>关闭减薄</div>:<div></div>} */}
+                            
 
 
 
@@ -479,29 +824,6 @@ class Result extends React.Component {
                     </div>
                 ))}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <div style={{backgroundColor: " rgb(255, 255, 255)",padding: "0 2rem 2rem"}}>
                     <input className="result_common_button" type="button" value="增加减保次数" onClick={(e)=>{
                         
@@ -531,7 +853,11 @@ class Result extends React.Component {
                 </div>
                 {/* <div className={"benfit_bottom"}>保险公司不得违规销售非保险金融产品,请勿参加非法集资</div> */}
                 <div className={"benfit_bottom"}></div>
-                <Button title="查看“幸福财富尊享终生寿险”逐年数据演示" submitFunc={(e)=>this.submitFunc(e)}></Button>
+                </div>
+                </Tabs>
+                <WhiteSpace />
+                </div>
+                <Button title="查看“幸福财富尊享终生寿险”逐年数据演示"  submitFunc={(e)=>this.choiceJumoFunc(e)}></Button>
             </div>
         )
     }
