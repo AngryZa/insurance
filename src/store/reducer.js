@@ -34,6 +34,9 @@ export default (state,action) => {
         case "RESETDURING":
             newState.during = action.value;
             return newState;
+        case "JUMPINDEX":
+            newState.jumpIndex = action.value;
+            return newState;
         default:
             return state;
     }

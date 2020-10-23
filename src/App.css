@@ -512,11 +512,12 @@ font-weight: 400;
     border-bottom: 0.1rem solid #000;
     text-align: center;
     background-color: transparent;
+    color: #D99257!important;
 }
 .data_end_of {
     display: inline-block;
     min-width: 3rem;
-    border-bottom: 0.1rem solid #000;
+    /* border-bottom: 0.1rem solid #000; */
     box-sizing: border-box;
     margin: 0 0.2rem;
     text-align: center;
@@ -608,6 +609,7 @@ font-weight: 400;
     background-color: transparent;
     max-width: 5rem;
     text-align: center;
+    color: #D99257;
 }
 .during_add_frame {
     height: 5rem;
@@ -627,7 +629,8 @@ font-weight: 400;
     padding: 0 1rem;
     line-height: 1.15;
     text-align: center;
-    border-bottom: 0.1rem solid #333;
+    /* border-bottom: 0.1rem solid #333; */
+    color: #E14E0D!important;
 }
 .result_item_title_special {
     line-height: 4rem;

@@ -57,13 +57,14 @@ class Result extends React.Component {
             radio:'',
             tabs : [
                 { title: '固定年龄段减保'},
-                { title: '非固定年龄段减保' },
+                { title: '非固定年龄段减保'},
             ],
             informationsAE: [],
             totalAE: 0,
             computedArrAE: [
-                computedItem,
+                computedItem
             ],
+            computedArrAE: store.getState().during.computedArr,
             jumpIndex:0
         }
         this.submitFunc1 = this.submitFunc1.bind(this);
@@ -77,6 +78,8 @@ class Result extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.state.jumpIndex,'jumpIndex')
+        console.log(store.getState().during.computedArr,'6666')
         window.scrollTo(0,0);
         const params = new URLSearchParams(this.props.location.search);
         const data  = {
@@ -89,6 +92,8 @@ class Result extends React.Component {
         if(data.sex!=null && data.age!=null && data.date!=null && data.money!=null) {
             var informations = Computed(data);
             var informationsAE = Computed(data);
+            var csb=store.getState().during.computedArr
+            console.log(csb,'svdff')
 
             this.setState({
                 data,
@@ -107,25 +112,63 @@ class Result extends React.Component {
 
                 informationsAE,
                 totalAE: Number(data.money),
-                computedArrAE: store.getState().during.computedArr
+                computedArrAE: store.getState().during.computedArr,
+                jumpIndex: store.getState().jumpIndex,
             },()=>{
-                // console.log(this.state.infos,'callback')
+                console.log(this.state.jumpIndex,'store里面的')
             })
         } else {
             this.props.history.replace("/");
         }
-        console.log(this.state.computedArrAE,'mapmap')
+    }
+    componentWillUnmount() {
+        var arr = this.state.computedArrAE;
+        var arrAE=this.state.computedArr;
+        var index=this.state.jumpIndex
+         //store中result的值
+        var a={
+                year: 0,
+                computedArr: [
+                    {
+                        year: "",
+                        result: "",
+                        value: "",
+                        finish: ""
+                    }
+                ]
+        }
+        //store中during的值
+        var b={
+        computedArr: [
+            {
+                age_start: "",
+                age_end: "",
+                diminish: "",
+                cash: "",
+                finish: ""
+            }
+        ]
+        }
+        // console.log("重置store")
+        store.dispatch({type: "JUMPINDEX",value: index});
+        // console.log(arr,arrAE,index)
+        if(index==2||index==0){
+            store.dispatch({type: "RESETRESULT", value: a});
+        }else{
+            store.dispatch({type: "RESETDURING", value: b});
+        }
     }
 
+
     choiceJumoFunc(){
-        console.log(666)
         var index= this.state.jumpIndex
-        console.log(index)
-        if(index===0){
+        // console.log('正在跳转' ,index)
+        if(index==2||index==0){
             this.submitFunc2()
         }else{
             this.submitFunc1()
         }
+        
     }
 
 
@@ -220,7 +263,6 @@ class Result extends React.Component {
         
         const type = Number(e.target.dataset.type);
         const index = Number(e.target.dataset.index);
-        
 
         var value = e.target.value.replace(/\D/g,'');
         var arr = this.state.computedArrAE;
@@ -269,7 +311,10 @@ class Result extends React.Component {
 
         this.setState({
             computedArrAE: arr
+        },()=>{
+            console.log(this.state.computedArrAE,'fuidioao')
         })
+        
         console.log(this.state.data,'前面的是data,后面那个是COMPTERARR',this.state.computedArrAE)
     }
 
@@ -384,7 +429,7 @@ class Result extends React.Component {
                 }></Header>
                 <div className="result_header">
                     <div className="result_header_title">《幸福传世金生终身寿险详情》</div>
-                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福传世金生终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div>
+                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div>
                 </div>
                 <div style={{backgroundColor: "#fff",marginBottom: "1rem"}}>
                     <div className="result_middle_first">
@@ -494,20 +539,20 @@ class Result extends React.Component {
                 <div>
                 <WhiteSpace />
                 <Tabs 
-                    // onChange={(tab, index) => { console.log('onChange', index, tab); }}
+                
                     onTabClick={(tab, index) => { 
-                        this.clearStoreFunc() ;
                         console.log('onTabClick', index, tab);
-                        if(index===0){
-                            this.setState({jumpIndex:0},()=>{
+                        if(index==0){
+                            this.setState({jumpIndex:2},()=>{
                                 console.log(this.state.jumpIndex,'junpindex');
                             })
                         }else{
-                            this.setState({jumpIndex:1},()=>{
+                            this.setState({jumpIndex:3},()=>{
                                 console.log(this.state.jumpIndex,'junpindex');
                             })
                         }
                     }}
+                    initialPage={store.getState().jumpIndex==3?1:0}
                     tabs={this.state.tabs}  animated={false} useOnPan={false}>  
                 {/* 固定年龄段减保 */}
                 <div  style={{ backgroundColor: '#fff' }}>
@@ -525,6 +570,7 @@ class Result extends React.Component {
 
                     {/* 展示渲染栏目 */}
                     {this.state.computedArrAE.map((item,index)=>(
+                    // {store.getState().during.computedArr.map((item,index)=>(
                         <div className="during_lists_frame" key={index}>
                             <div className="during_lists_box">
                                 <span>在</span>
@@ -543,12 +589,12 @@ class Result extends React.Component {
                                 }}></input>
 
                                 
-                                元，累计领取现金价值
+                                元，<br/>累计领取现金价值
                                 {/* <input className="during_input" disabled value={item.cash}></input> */}
-                                <span className="span during_result_input">{item.cash}</span>
+                                <span className="span during_result_input">{item.cash?item.cash:'***'}</span>
                                 元。第{item.age_end && Number(item.age_end) > Number(this.state.data.age)?Number(item.age_end)-Number(this.state.data.age):"*"}个保单年度末现金价值
                                 {/* <input className="during_input" disabled value={item.finish}></input> */}
-                                <span className="span during_result_input">{item.finish}</span>
+                                <span className="span during_result_input">{item.finish?item.finish:'***'}</span>
                                 元（减保后）。
                             </div>
                            
@@ -578,8 +624,6 @@ class Result extends React.Component {
                                         if(r.length>0){
                                             return false
                                         }
-
-
                                         arr.push(
                                             {
                                                 age_start: "",
@@ -601,8 +645,6 @@ class Result extends React.Component {
                 
                 </div>
                                 
-
-
 
 
 
@@ -679,18 +721,26 @@ class Result extends React.Component {
                                         // arr[allIndex].result = Number(1725);
                                         // arr[allIndex].finish =(((Number(infos.initMoney)-Number(item.value))/self.state.radio)*Number(infos.cash)).toFixed(2)
                                         // arr[allIndex].finish=90
-                                        
                                         arr = Reload(arr,self.state.data.age,self.state.informations,self.state.radio);
                                         
+                                        this.setState({
+                                            computedArr: arr    
+                                        })
                                     } else {
                                         arr[allIndex].result = "";
                                         arr[allIndex].finish = "";
+
+
+                                        this.setState({
+                                            computedArr: arr    
+                                        })
+
                                     }
-                                    
+                                    console.log(arr,777)
                                     this.setState({
                                         computedArr: arr    
                                     })
-                                    console.log(arr,777)
+                                    
                                     store.dispatch({type: "CHANGEARR",value: arr});
                                 }} value={item.year}></input>
                                 
@@ -724,17 +774,7 @@ class Result extends React.Component {
 
                                     console.log(arr,'arr',allIndex)
 
-                                    /* for(let i=0;i<arr.length;i++) {
-                                        if(allIndex !== i) {
-                                            total = total - Number(arr[i].value)
-                                        }
-                                    }
-                                    if(Number(value)>=total) {
-                                        value = total;
-                                    }
-                                    if(total === 0) {
-                                        value = "";
-                                    } */
+                                    
                                     
 
 
@@ -745,8 +785,6 @@ class Result extends React.Component {
                                     var index = Number(age) - Number(this.state.data.age);
                                     //arr[0].value=value
                                     arr[allIndex].value = value;
-
-
                                     if(item.year !== "" && index >= 0) {
                                         var self = this;
                                         // console.log(item,'item888888',value)
@@ -785,9 +823,6 @@ class Result extends React.Component {
                                         arr = Reload(arr,self.state.data.age,self.state.informations,self.state.radio);
                                         
                                     }
-
-
-
                                     this.setState({
                                         computedArr: arr,
                                         total
@@ -804,7 +839,7 @@ class Result extends React.Component {
                                 
                                 
                                 
-                                <span>元基本保险金额,对应现金价值<span className="data_end_of">{item.result}</span>元。年度末现金价值（减保后）<span className="data_end_of">{item.finish}</span>元</span>
+                                <span>元基本保险金额,对应现金价值<span className="data_end_of">{item.result?item.result:'***'}</span>元。年度末现金价值（减保后）<span className="data_end_of">{item.finish?item.finish:'***'}</span>元</span>
                                 
                                 {/* 关闭减保 */}
                             {allIndex !== 0?<div className="result_close_frame" onClick={()=>{
@@ -817,8 +852,6 @@ class Result extends React.Component {
                             }}>关闭此减保</div>:<div></div>}
                             
                             </div>
-                           
-                           
                             {Number(item.value%1000)!==0?<div className="result_bottom_notice"><span className="span">*</span>减保基本保险金额必须是1000的整数倍</div>:<div></div>}
                         </div>
                     </div>
@@ -837,7 +870,6 @@ class Result extends React.Component {
                         if(r.length>0){
                             return false
                         }
-
                         arr.push(
                             {
                                 year: "",

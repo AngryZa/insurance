@@ -28,7 +28,6 @@ class During extends React.Component {
                 date: "***",
                 money: "***"
             },
-
             informationsAE: [],
             totalAE: 0,
             computedArrAE: [
@@ -68,9 +67,9 @@ class During extends React.Component {
             this.props.history.replace("/");
         }
     }
-
     componentWillUnmount() {
         var arr = this.state.computedArrAE;
+        console.log(arr,'willmount')
         store.dispatch({type: "CHANGEDURING",value: arr});
     }
 

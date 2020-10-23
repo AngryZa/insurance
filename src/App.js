@@ -16,7 +16,7 @@ import shareUrl from './asset/js/share';
 class App extends Component {
   render() {
     return (
-      <Router basename={'/react'}>
+      <Router basename={'/cfzx'}>
         <Route render={()=>(
           <Switch>
             {shareUrl()}

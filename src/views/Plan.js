@@ -27,6 +27,7 @@ class Plan extends React.Component {
     }
 
     componentDidMount() {
+
         window.scrollTo(0,0);
         const params = new URLSearchParams(this.props.location.search);
         const data  = {
@@ -66,22 +67,21 @@ class Plan extends React.Component {
         topScroll.addEventListener("scroll",this.listenerTopFunc,false);
         bottomScroll.addEventListener("scroll",this.listenerBottomFunc,false);
         // console.log(informations,'ininin')
-
-
-
     }
 
     componentWillUnmount() {
         window.removeEventListener("scroll",this.listenerWinFunc);
         topScroll.removeEventListener("scroll",this.listenerTopFunc);
         bottomScroll.removeEventListener("scroll",this.listenerBottomFunc);
-        store.dispatch({type: "CHANGEDURING",value: [{
+
+        /* store.dispatch({type: "CHANGEDURING",value: [{
             age_start: "",
             age_end: "",
             diminish: "",
             cash: "",
             finish: ""
-        }]});
+        }]}); */
+
     }
 
     listenerWinFunc() {
@@ -118,7 +118,7 @@ class Plan extends React.Component {
                 }></Header>
                 <div className="result_header">
                     <div className="result_header_title">《幸福财富尊享终身寿险详情》</div>
-                    <div className="result_header_cont">被保险人<span className="span">{this.state.data.name}</span>，<span className="span">{this.state.data.age}</span>周岁，<span className="span">{Number(this.state.data.sex)===0?"男":"女"}</span>性，投保《幸福传世金生终身寿险》， 基本保险金额<span className="span">{this.state.data.money}</span>元，选择<span className="span">{Number(this.state.data.date) === 1000?"一次性":this.state.data.date+"年"}</span>交费，实际共缴纳保费<span className="span">{this.state.yearMoney}</span>元。共减保<span className="span">{this.state.minusAllMoney}</span>元基本保险金额，累计对应现金价值<span className="span">{this.state.allMinusMoney}</span>元。</div>
+                    <div className="result_header_cont">被保险人<span className="span">{this.state.data.name}</span>，<span className="span">{this.state.data.age}</span>周岁，<span className="span">{Number(this.state.data.sex)===0?"男":"女"}</span>性，<br/>投保《幸福财富尊享终身寿险》， 基本保险金额<span className="span">{this.state.data.money}</span>元，选择<span className="span">{Number(this.state.data.date) === 1000?"一次性":this.state.data.date+"年"}</span>交费，实际共缴纳保费<span className="span">{this.state.yearMoney}</span>元。共减保<span className="span">{this.state.minusAllMoney}</span>元基本保险金额，累计对应现金价值<span className="span">{this.state.allMinusMoney}</span>元。</div>
                 </div>
                 {this.state.data.minus.length>0?<div className="result_header">
                     <div className="plan_title">减保数据</div>

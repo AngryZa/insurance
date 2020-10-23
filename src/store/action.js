@@ -61,5 +61,6 @@ export default {
                 finish: ""
             }
         ]
-    }
+    },
+    jumpIndex:0
 }
