@@ -657,3 +657,6 @@ font-weight: 400;
 .am-tabs-default-bar-tab-active{
     color: #D17A32!important;
 }
+.mark_color{
+    color: #D17A32;
+}

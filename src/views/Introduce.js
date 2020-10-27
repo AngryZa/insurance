@@ -39,7 +39,7 @@ class Introduce extends React.Component {
         let rules = [
             {
                 title: "投保年龄: ",
-                cont: "出生满28天（含）至70周岁（含）;"
+                cont: "出生满30天（含）至70周岁（含）;"
             },
             {
                 title: "交费方式: ",
@@ -47,7 +47,7 @@ class Introduce extends React.Component {
             },
             {
                 title: "交费期间: ",
-                cont: "一次交清、3年交、5年交、10年交、15年交、20年交;"
+                cont: "趸交、3年交、5年交、10年交、15年交、20年交;"
             },
             {
                 title: "保险期间: ",
@@ -55,7 +55,7 @@ class Introduce extends React.Component {
             },
             {
                 title: "保额要求: ",
-                cont: "投保本险种每份投保单的最低基本保险金额为5万元,超过5万元的基本保险金额须为1000元的整数倍。"
+                cont: "投保本险种每份投保单的最低保险费为5000元,超过1000元的保险费必须为1000元的整数倍。"
             }
         ].map((item,index)=>
             <div className={"introduce_require"} key={index}>

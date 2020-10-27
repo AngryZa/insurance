@@ -12,8 +12,12 @@ export default function computed(data,miunsArr = []) {
     var finishAllMoney = 0;
     //费率
     var radio = getRadio(length,data.sex,Number(data.age));
-    var yearMoney = Number(data.money)/1000*radio;
+    
     var yearMoney = (Number(data.money)/radio)*1000;
+
+
+    // var moneys=(yearMoney/1000)*radio
+
     
     // for(let i=0;age < 105;i++) {
     for(let i=0;age < 106;i++) {
@@ -226,7 +230,8 @@ export default function computed(data,miunsArr = []) {
             cash,
             finishAllMoney: finishAllMoney.toFixed(2),
             minusAllMoney: minusAllMoney.toFixed(2),
-            radio
+            radio,
+            // moneys
         })
     }
     // console.log(arr,88888)

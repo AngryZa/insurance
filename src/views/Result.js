@@ -78,8 +78,8 @@ class Result extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.state.jumpIndex,'jumpIndex')
-        console.log(store.getState().during.computedArr,'6666')
+        // console.log(this.state.jumpIndex,'jumpIndex')
+        // console.log(store.getState().during.computedArr,'6666')
         window.scrollTo(0,0);
         const params = new URLSearchParams(this.props.location.search);
         const data  = {
@@ -89,11 +89,14 @@ class Result extends React.Component {
             date: params.get("date"),
             money: params.get("money")
         }
+        
         if(data.sex!=null && data.age!=null && data.date!=null && data.money!=null) {
+            console.log(data)
             var informations = Computed(data);
             var informationsAE = Computed(data);
             var csb=store.getState().during.computedArr
-            console.log(csb,'svdff')
+            // console.log(csb,'svdff')
+            
 
             this.setState({
                 data,
@@ -115,7 +118,7 @@ class Result extends React.Component {
                 computedArrAE: store.getState().during.computedArr,
                 jumpIndex: store.getState().jumpIndex,
             },()=>{
-                console.log(this.state.jumpIndex,'store里面的')
+                
             })
         } else {
             this.props.history.replace("/");
@@ -429,7 +432,8 @@ class Result extends React.Component {
                 }></Header>
                 <div className="result_header">
                     <div className="result_header_title">《幸福传世金生终身寿险详情》</div>
-                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div>
+                    {/* <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div> */}
+                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险” , 年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元， {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,基本保险金额 <span className="span">{this.state.data.money}</span> 元。</div>
                 </div>
                 <div style={{backgroundColor: "#fff",marginBottom: "1rem"}}>
                     <div className="result_middle_first">
@@ -575,13 +579,13 @@ class Result extends React.Component {
                             <div className="during_lists_box">
                                 <span>在</span>
                                 <input className="during_input" data-type="1" data-index={index} onChange={(e)=>{this.changeFunc(e)}} value={item.age_start}></input>
-                                周岁（第{item.age_start && Number(item.age_start) > Number(this.state.data.age)?Number(item.age_start)-Number(this.state.data.age):"*"}个保单年度末）到
+                                周岁（第<span className="mark_color" > {item.age_start && Number(item.age_start) > Number(this.state.data.age)?Number(item.age_start)-Number(this.state.data.age):"*"}</span>个保单年度末）到
                                 <input className="during_input" data-type="2" data-index={index} onChange={(e)=>this.changeFunc(e)} value={item.age_end} onBlur={()=>{
                                     if(Number(item.age_start)>Number(item.age_end)) {
                                         Toast.info("第一个年龄必须小于等于第二个年龄");
                                     }
                                 }}></input>
-                                周岁（第{item.age_end && Number(item.age_end) > Number(this.state.data.age)?Number(item.age_end)-Number(this.state.data.age):"*"}个保单年度末），每年减保
+                                周岁（第<span className="mark_color">{item.age_end && Number(item.age_end) > Number(this.state.data.age)?Number(item.age_end)-Number(this.state.data.age):"*"}</span>个保单年度末），每年减保
                                 <input className="during_input" data-type="3" data-index={index} onChange={(e)=>this.changeFunc(e)} value={item.diminish} onBlur={()=>{
                                     if(Number(item.diminish)%1000!==0) {
                                         Toast.info("输入的内容不是1000的整数倍");
@@ -747,7 +751,7 @@ class Result extends React.Component {
 
 
 
-                                <span>周岁（第{Number(item.year)-Number(this.state.data.age)<1?"*":Number(item.year)-Number(this.state.data.age)}个保单年度末）时,减保</span>
+                                <span>周岁（第<span className="mark_color">{Number(item.year)-Number(this.state.data.age)<1?"*":Number(item.year)-Number(this.state.data.age)}</span>个保单年度末）时,减保</span>
 
 
 

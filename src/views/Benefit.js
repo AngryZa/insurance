@@ -8,6 +8,7 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import Notice from '../components/Notice';
 
+import Computed from '../asset/js/computed2';
 import {Toast} from 'antd-mobile';
 
 class Benefit extends React.Component {
@@ -149,14 +150,16 @@ class Benefit extends React.Component {
             Toast.info("请选择交费期间");
             return;
         // } else if (money.length<=0||Number(money)<50000) {
-        } else if (money<50000) {
+        } else if (money<5000) {
             console.log(money.length)
-            Toast.info("请输入基本保险金额,最低5万元");
+            Toast.info("请输入基本保险金额,最低5千元");
             return;
-        // } else if(Number(money)>=50000 && Number(money)%1000 !== 0) {
-            // Toast.info("超过5万元的保险费必须是1000元的整数倍");
-            // return;
+        } else if(Number(money)>=5000 && Number(money)%1000 !== 0) {
+            Toast.info("超过5千元的保险费必须是1000元的整数倍");
+            return;
         } else {
+            
+            
             var data = {
                 name,
                 sex,
@@ -164,6 +167,9 @@ class Benefit extends React.Component {
                 date,
                 money
             }
+             var informations = Computed(data);
+            console.log(informations,'9999')
+            data.money=informations
             this.props.history.push({pathname: "/result",search: `?name=${data.name}&sex=${data.sex}&age=${data.age}&date=${data.date}&money=${data.money}`}); 
         }
     }
@@ -186,6 +192,7 @@ class Benefit extends React.Component {
     }
 
     componentWillUnmount() {
+        
         store.dispatch({type: "CHANGEBENEFIT",value: this.state.isAllPay});
     }
 
@@ -218,7 +225,7 @@ class Benefit extends React.Component {
                     {/* 投保年龄 */}
                     <div className={"benfit_item"}>
                         <Title title="投保年龄"></Title>
-                        <Input placeholder="出生满28天（含）至70周岁（含）" value={store.getState().benefit.age} changeContent={(e)=>this.changeAge(e)}></Input>
+                        <Input placeholder="出生满30天（含）至70周岁（含）" value={store.getState().benefit.age} changeContent={(e)=>this.changeAge(e)}></Input>
                     </div>
                 </div>
                 <div style={styles.frame}>
@@ -236,7 +243,7 @@ class Benefit extends React.Component {
                                 this.setState({
                                     isAllPay: false
                                 })
-                            }}>年交</div>
+                            }}>期交</div>
                         </div>
                     </div>
                     {/* 投保时间 */}
@@ -260,12 +267,12 @@ class Benefit extends React.Component {
                     </div>
                     {/* 基本保险金额 */}
                     <div className={"benfit_item"}>
-                        <Title title="基本保险金额"></Title>
-                        <Input placeholder="50000元起" changeContent={(e)=>this.changeInit(e)} value={store.getState().benefit.init}></Input>
+                        <Title title="年交保费"></Title>
+                        <Input placeholder="5000元起" changeContent={(e)=>this.changeInit(e)} value={store.getState().benefit.init}></Input>
                     </div>
                     <div className={"benefit_notice"}>
                         <div className={"benfit_notice_first"}>*</div>
-                        <div className={"benfit_notice_second"}>最低基本保险金额为5万元,超过5万元的保险费必须是1000元的整数倍</div>
+                        <div className={"benfit_notice_second"}>最低基本保险金额为5千元,超过5千元的保险费必须是1000元的整数倍</div>
                     </div>
                 </div>
                 <div className={"benfit_bottom"}>保险公司不得违规销售非保险金融产品,请勿参加非法集资</div>
