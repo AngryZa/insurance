@@ -433,7 +433,7 @@ class Result extends React.Component {
                 <div className="result_header">
                     <div className="result_header_title">《幸福传世金生终身寿险详情》</div>
                     {/* <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div> */}
-                    <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险” , 年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元， {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,基本保险金额 <span className="span">{this.state.data.money}</span> 元。</div>
+                    <div className="result_header_cont"><span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险” , 年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元， {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,基本保险金额 <span className="span">{this.state.data.money}</span> 元。</div>
                 </div>
                 <div style={{backgroundColor: "#fff",marginBottom: "1rem"}}>
                     <div className="result_middle_first">

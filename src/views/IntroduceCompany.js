@@ -77,7 +77,7 @@ class Introduce extends React.Component {
                 {/* <div style={{width:"100%",height:"28rem",backgroundColor:styles.color}}></div> */}
                 <img style={{width: "100%"}} src={require("../asset/img/home_bg1.png")} alt=""></img>
                 <div>
-                <img style={{width: "100%"}} src={require("../asset/img/companytext.png")} alt=""></img>
+                <img style={{width: "100%"}} src={require("../asset/img/companytext.jpg")} alt=""></img>
                 </div>
             </div>
         )

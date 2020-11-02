@@ -25,7 +25,8 @@ class Data extends React.Component {
                 date: "",
                 money: ""
             },
-            infomations: []
+            infomations: [],
+            inputValue:""
         }
     }
 
@@ -136,14 +137,19 @@ class Data extends React.Component {
                                 })
                                 var self = this;
                                 var age = Number(value)-1;
+                                
                                 var index = age - Number(this.state.data.age);
+
+
                                 var money = this.state.money;
                                 if(index >= 0 && money !== "") {
                                     var infos = self.state.infomations[index];
-                                    // var single = (infos.bottomMoney/Number(this.state.data.money)).toFixed(2);
-                                    // var notice = Math.round((Number(money) * single)/1000)*1000;
-                                    var notice = (Number(money)/infos.cash*1000).toFixed(2);
+                                    
+                                    var notice=(Number(this.state.inputValue)/infos.cash)*infos.radio
+
+                                    
                                     notice = Math.round(notice/1000)*1000;
+
                                     this.setState({
                                         notice
                                     })
@@ -165,20 +171,23 @@ class Data extends React.Component {
                         <Input placeholder="最低为1000" changeContent={(e)=>{
                             var value = e.target.value.replace(/\D/g,'');
                             if(value >= 1000 && value%1000 === 0) {
+
                                 var self = this;
+                                self.state.inputValue=value;
+                                console.log(self.state.inputValue,"sssstate")
                                 var age = Number(this.state.age)-1;
                                 var index = age - Number(this.state.data.age);
                                 var money = value;
                                 if(index >= 0 && money !== "") {
                                     var infos = self.state.infomations[index];
-                                    console.log(infos.radio,1333)
-                                    // var single = (infos.bottomMoney/Number(this.state.data.money)).toFixed(2);
-                                    // var notice = Math.round((Number(money) * single)/1000)*1000;
-                                    // var notice = (Number(money)/infos.cash*1000).toFixed(2);
-                                    var notice = ((Number(money)/infos.radio)*infos.cash).toFixed(2);
+                                    var infos = self.state.infomations[index];
+                                   
+                                    
+                                   
+                                    var notice=(Number(value)/infos.cash)*infos.radio
 
+                                    //保留千位
                                     notice = Math.round(notice/1000)*1000;
-
                                     this.setState({
                                         notice
                                     })
