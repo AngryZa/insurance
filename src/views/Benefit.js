@@ -11,7 +11,7 @@ import Notice from '../components/Notice';
 import Computed from '../asset/js/computed2';
 import {Toast} from 'antd-mobile';
 
-class Benefit extends React.Component {
+class   Benefit extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
