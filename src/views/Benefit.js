@@ -82,8 +82,8 @@ class Benefit extends React.Component {
     changeAge(event) {
         event.persist();
         var value = event.target.value;
-        if(Number(event.target.value) > 68) {
-            value = "68";
+        if(Number(event.target.value) > 70) {
+            value = "70";
         }
         this.setState({
             age: value.replace(/\D/g,'')
@@ -143,7 +143,7 @@ class Benefit extends React.Component {
         } else if(sex === null || sex === undefined) {
             Toast.info("请选择性别");
             return;
-        } else if (age.length<=0||Number(age)<0||Number(age)>68) {
+        } else if (age.length<=0||Number(age)<0||Number(age)>70) {
             Toast.info("年龄有误");
             return;
         } else if (!date) {
@@ -199,7 +199,7 @@ class Benefit extends React.Component {
     render() {
         return (
             <div>
-                <Notice top={5.5}></Notice>
+                <Notice top={4.0}></Notice>
                 <Header title="利益测算" goHome={
                     (e)=>{
                         console.log(window.history);

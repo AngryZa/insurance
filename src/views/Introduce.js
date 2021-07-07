@@ -152,9 +152,10 @@ class Introduce extends React.Component {
                         {/* <img className={"introduce_bg"} src={require("../asset/img/shield.png")} alt=""></img> */}
                     </ul>
                 </div>
-                <div style={styles.box}>
+                <div style={styles.box} className={'introduce_warning'}>
                     <img src={require("../asset/img/jianbao.png")} className={"introduce_title"} style={{marginTop:"2rem"}} alt=""></img>
-                    <div className={"introduce_notice"}>本险种减保后的基本保险金额不低于5000元,且超过5000元的基本保险金额须为1000元的整数倍。</div>
+                    <div className={"introduce_require_icon10"}>!</div>
+                    <div className={"introduce_notice"}>本险种减保后的基本保险金额不低于5000元。</div>
                 </div>
                 <div className={"introduce_bottom"}>保险公司不得违规销售非保险金融产品,请勿参加非法集资</div>
             </div>

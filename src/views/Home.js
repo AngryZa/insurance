@@ -52,18 +52,18 @@ class Home extends React.Component {
                 <Notice></Notice>
                 {/* <div style={{width:"100%",height:"28rem",backgroundColor:styles.color}}></div> */}
                 <img style={{width: "100%"}} src={require("../asset/img/home_bg1.png")} alt=""></img>
-                <div style={{marginTop:"1rem",backgroundColor: "#fff"}}>
-                    <Link to={{pathname: "/introduce"}} className={"home_list"} style={{height:"4rem"}}>
+                <div style={{marginTop:"0rem",backgroundColor: "#fff"}}>
+                    <Link to={{pathname: "/introduce"}} className={"home_list"} style={{height:"6rem"}}>
                         <img style={{height: "2rem",marginRight: "2rem"}} src={require("../asset/img/home_one1.png")} alt=""></img>
                         <div>产品简介</div>
                         <img style={styles.more} src={moreImg} alt=""></img>
                     </Link>
-                    <Link to={{pathname: "/benefit"}} className={"home_list"} style={{height:"4rem"}}>
+                    <Link to={{pathname: "/benefit"}} className={"home_list"} style={{height:"6rem"}}>
                         <img style={{height: "2rem",marginRight: "2rem"}} src={require("../asset/img/home_two.png")} alt=""></img>
                         <div>利益测算</div>
                         <img style={styles.more} src={moreImg} alt=""></img>
                     </Link>
-                    <Link to={{pathname: "/introduceCompany"}} className={"home_list"} style={{height:"4rem"}}>
+                    <Link to={{pathname: "/introduceCompany"}} className={"home_list"} style={{height:"6rem"}}>
                         <img style={{height: "2rem",marginRight: "2rem"}} src={require("../asset/img/home_two1.png")} alt=""></img>
                         <div>公司介绍</div>
                         <img style={styles.more} src={moreImg} alt=""></img>

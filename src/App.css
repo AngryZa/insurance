@@ -4,9 +4,11 @@
     align-items: center;
     position: relative;
     color: #333333;
-    font-size: 1.rem;
+    font-size: 2rem;
     border-bottom: 0.1rem solid #E0E0E0;
 }
+
+
 .home_list:last-child {
     border-bottom: none;
 }
@@ -93,6 +95,8 @@
     font-size: 1.3rem;
     line-height: 2.35rem;
     margin-top: 2rem;
+    margin-left: 3rem;
+    /* text-indent:3rem; */
 }
 .introduce_require {
     padding-left: 3rem;
@@ -100,10 +104,26 @@
     position: relative;
     z-index: 1;
 }
+.introduce_warning{
+    position: relative;
+}
 .introduce_require_icon {
     position: absolute;
     left: 0;
     top: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color:#d65c52;
+    line-height: 1.5rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
+}
+.introduce_require_icon10 {
+    position: absolute;
+    left: 2rem;
+    top: 7.6rem;
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 50%;
@@ -536,12 +556,17 @@ font-weight: 400;
     line-height: 2rem;
 }
 .notice_fixed {
-    position: absolute;
+    position: fixed;
     right: 1.5rem;
     z-index: 1;
-    background-color: rgba(0, 0, 0, 0.2);
-    color: #fff;
-    font-size: 1.1rem;
+    /* background-color: rgba(0, 0, 0, 0.2); */
+    /* background-color: rgba(0, 0, 0); */
+    /* color: #fff; */
+    color:blue;
+    /* color:#067F94 ; */
+    /* font-size: 1.1rem; */
+    font-size: 1.5rem;
+    
     padding: 0.8rem 1rem;
     border-radius: 0.2rem;
 }

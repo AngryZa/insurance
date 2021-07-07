@@ -110,14 +110,14 @@ class Plan extends React.Component {
     render() {
         return (
             <div>
-                <Notice top={5}></Notice>
+                <Notice top={4.0}></Notice>
                 <Header title="逐年数据" goHome={
                     (e)=>{
                         this.props.history.replace("/")
                     }
                 }></Header>
                 <div className="result_header">
-                    <div className="result_header_title">《幸福财富尊享终身寿险详情》</div>
+                    <div className="result_header_title">《幸福财富尊享终身寿险》详情</div>
                     <div className="result_header_cont">被保险人<span className="span">{this.state.data.name}</span>，<span className="span">{this.state.data.age}</span>周岁，<span className="span">{Number(this.state.data.sex)===0?"男":"女"}</span>性，<br/>投保《幸福财富尊享终身寿险》， 基本保险金额<span className="span">{this.state.data.money}</span>元，选择<span className="span">{Number(this.state.data.date) === 1000?"一次性":this.state.data.date+"年"}</span>交费，实际共缴纳保费<span className="span">{this.state.yearMoney}</span>元。共减保<span className="span">{this.state.minusAllMoney}</span>元基本保险金额，累计对应现金价值<span className="span">{this.state.allMinusMoney}</span>元。</div>
                 </div>
                 {this.state.data.minus.length>0?<div className="result_header">
@@ -174,7 +174,7 @@ class Plan extends React.Component {
                             <div className="plan_scroll_header_title">减保后基本保险金额</div>
                             <div className="plan_scroll_header_title">减保部分对应的现金价值</div>
                             <div className="plan_scroll_header_title">累计减保部分对应的现金价值</div>
-                            <div className="plan_scroll_header_title">年度末身故/全残保险金</div>
+                            <div className="plan_scroll_header_title">年度末身故保险金</div>
                             <div className="plan_scroll_header_title">年度末现金价值</div>
                         </div>
                     </div>
@@ -212,7 +212,7 @@ class Plan extends React.Component {
                 </div>
                 <div style={{backgroundColor: "#fff",padding: "3rem 4rem"}}>
                     <div className="plan_title">温馨提示</div>
-                    <div style={{color: "#333",fontSize: "1.3rem",lineHeight: "2.35rem",marginTop: "2rem"}}>具体保险责任详见保险合同。我公司在保险合同约定情况下不承担保险责任,请关注保险条款中责任免除部分。自您收到保险单并书面签收次日起可享有10天的犹豫期,在犹豫期后退保会产生一定的费用损失。</div>
+                    <div style={{color: "#333",fontSize: "1.3rem",lineHeight: "2.35rem",marginTop: "2rem"}}>具体保险责任及未尽事宜请以条款和保险合同为准，我公司在约定情况下不承担保险责任，请关注条款中的责任免除部分。自您收到保险单签收之日起可享有15天的犹豫期，在犹豫期后退保金产生一定的费用损失。</div>
                 </div>
                 <div className={"benfit_bottom"}>保险公司不得违规销售非保险金融产品,请勿参加非法集资</div>
             </div>

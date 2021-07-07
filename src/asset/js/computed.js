@@ -1,7 +1,7 @@
 import Data from "./data.json";
 import Cash from "./cash.json";
 export default function computed(data,miunsArr = []) {
-    // console.log(data)
+    
     var arr = [];
     //交费期间
     var length = Number(data.date);
@@ -14,7 +14,8 @@ export default function computed(data,miunsArr = []) {
     var radio = getRadio(length,data.sex,Number(data.age));
     
     var yearMoney = (Number(data.money)/radio)*1000;
-
+    
+    console.log(length,'length',yearMoney)
 
     // var moneys=(yearMoney/1000)*radio
 
@@ -55,7 +56,8 @@ export default function computed(data,miunsArr = []) {
         //4.年度末已交保险费
         var finishMoney = 0;
         if(length === 1000) {
-            finishMoney = (lastMoney/1000)*radio;
+            // finishMoney = (lastMoney/1000)*radio;
+            finishMoney = (lastMoney/radio) *1000
         } else {
             // finishMoney = (lastMoney/1000) *radio*(index<=length?index:length);
             finishMoney = (lastMoney/radio) *1000*(index<=length?index:length);

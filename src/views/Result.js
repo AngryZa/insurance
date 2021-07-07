@@ -91,7 +91,7 @@ class Result extends React.Component {
         }
         
         if(data.sex!=null && data.age!=null && data.date!=null && data.money!=null) {
-            console.log(data)
+            console.log(data,172595717)
             var informations = Computed(data);
             var informationsAE = Computed(data);
             var csb=store.getState().during.computedArr
@@ -424,14 +424,14 @@ class Result extends React.Component {
     render() {
         return (
             <div>
-                <Notice top={5.5}></Notice>
+                <Notice top={4.0}></Notice>
                 <Header title="测算结果" goHome={
                     (e)=>{
                         this.props.history.replace("/")
                     }
                 }></Header>
                 <div className="result_header">
-                    <div className="result_header_title">《幸福传世金生终身寿险详情》</div>
+                    <div className="result_header_title">《幸福财富尊享终身寿险》详情</div>
                     {/* <div className="result_header_cont">欢迎您 <span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险”, 基本保险金额 <span className="span">{this.state.data.money}</span> 元, {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元。</div> */}
                     <div className="result_header_cont"><span>{this.state.data.name}</span> ,您 <span>{this.state.data.age}</span> 周岁, <span>{Number(this.state.data.sex)===0?"男士":"女士"}</span> ，<br/>投保“幸福财富尊享终身寿险” , 年交保费 <span className="span">{this.state.infos.yearMoney}</span> 元， {this.state.data.date!=="1000"?<span className="span">{this.state.data.date}年</span>:<span className="span">一次性</span>} 交费,基本保险金额 <span className="span">{this.state.data.money}</span> 元。</div>
                 </div>
@@ -520,7 +520,7 @@ class Result extends React.Component {
                             money: this.state.infos.bottomMoney
                         },
                         {
-                            title: "年度末身故/全残保险金",
+                            title: "年度末身故保险金",
                             money: this.state.infos.lameMoney
                         }
                     ].map((item,index)=>

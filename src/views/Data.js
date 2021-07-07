@@ -113,7 +113,7 @@ class Data extends React.Component {
     render() {
         return (
             <div className="flex_main_frame">
-                <Notice top={5}></Notice>
+                <Notice top={4.0}></Notice>
                 <Header title="" goHome={
                     (e)=>{
                         this.props.history.replace("/")
@@ -167,7 +167,7 @@ class Data extends React.Component {
                     {this.state.age!==""&&Number(this.state.age)<=Number(this.state.data.age)?<div className="data_notice"><span className="span">*</span>输入周岁不能小于保单年龄</div>:<div></div>}
                     <div className="data_notice">第<span className="data_end_of">{this.state.year}</span>个保单年度末</div>
                     <div className={"benfit_item"}>
-                        <Title title="约现金价值"></Title>
+                        <Title title="约领取现金价值"></Title>
                         <Input placeholder="最低为1000" changeContent={(e)=>{
                             var value = e.target.value.replace(/\D/g,'');
                             if(value >= 1000 && value%1000 === 0) {
